@@ -781,9 +781,13 @@ function pickVoice(){
     } else $("voiceHint").textContent="";
   }catch(e){}
 }
-document.addEventListener("theo:caps",()=>{ try{ pickVoice(); }catch(e){} });
+/* a voz do servidor (Google) chega depois do carregamento: se o aparelho não tem voz própria (ex.: Meta Quest), religa aqui */
+function enableSrvVoice(){ if(!srvVoice()) return; const b=$("bVoice");
+  if(b.disabled){ b.disabled=false; voiceOn=true; }
+  syncVoiceBtn(); }
+document.addEventListener("theo:caps",()=>{ try{ enableSrvVoice(); pickVoice(); }catch(e){} });
 if(hasTTS){ pickVoice(); try{ speechSynthesis.onvoiceschanged=pickVoice; }catch(e){} setTimeout(pickVoice,800); setTimeout(()=>{ voicesChecked=true; pickVoice(); },2500); }
-else { voiceOn=false; $("bVoice").textContent="Sem voz"; $("bVoice").disabled=true; $("bVoice").setAttribute("aria-pressed","false"); }
+else if(!srvVoice()){ voiceOn=false; $("bVoice").textContent="Sem voz"; $("bVoice").disabled=true; $("bVoice").setAttribute("aria-pressed","false"); }
 
 function sentences(t){ return (S(t).match(/[^.!?…]+[.!?…]+["”»)]*|[^.!?…]+$/g)||[]).map(s=>s.trim()).filter(Boolean); }
 function setStatus(t,mode){ $("statusText").textContent=t.toUpperCase(); $("statusText").classList.toggle("rec",mode==="rec"); }
@@ -1119,7 +1123,7 @@ function play(from){
         curSpeech=window.THEO_VOZ.speak(fala.replace(/\bTHEO\b/g,"Teo"),{tune,
           onProgress:p=>{ pB=Math.max(pB,p); },
           onEnd:()=>{ clearInterval(pulse); if(id===playId) go(); },
-          onError:()=>{ clearInterval(pulse); if(id===playId){ caption(fala); timer=setTimeout(go,Math.max(3500,words*400)); } }});
+          onError:(e)=>{ clearInterval(pulse); if(!window.__vozAviso){ window.__vozAviso=1; note("A voz não pôde tocar"+(e&&e.message?": "+e.message:"")+". As falas aparecem em texto.",true); } if(id===playId){ caption(fala); timer=setTimeout(go,Math.max(3500,words*400)); } }});
         timer=setTimeout(go,Math.max(8000,words*700)+15000);
         return;
       }

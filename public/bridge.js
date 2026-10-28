@@ -258,7 +258,7 @@
         method: "POST", headers: H({ "content-type": "application/json" }),
         body: JSON.stringify({ text, rate: tune && tune.vel != null ? +tune.vel : 0, pitch: tune && tune.tom != null ? (+tune.tom - 1) * 10 : 0 }),
       });
-      if (!r.ok) throw new Error("tts " + r.status);
+      if (!r.ok) { let m = ""; try { const d = await r.json(); m = d.message || d.code || ""; } catch (e) {} throw new Error("servidor de voz " + r.status + (m ? " (" + m.slice(0, 120) + ")" : "")); }
       return URL.createObjectURL(await r.blob());
     })();
     ttsCache.set(k, p);
@@ -276,8 +276,8 @@
       a.onerror = () => { if (!stopped) o.onError && o.onError(); };
       a.ontimeupdate = () => { if (!stopped && a.duration) o.onProgress && o.onProgress(a.currentTime / a.duration); };
       a.src = url; a.currentTime = 0;
-      a.play().then(() => o.onStart && o.onStart()).catch(() => { if (!stopped) o.onError && o.onError(); });
-    }).catch(() => { if (!stopped) o.onError && o.onError(); });
+      a.play().then(() => o.onStart && o.onStart()).catch(e => { if (!stopped) o.onError && o.onError(new Error("o navegador bloqueou o som; toque na tela e tente de novo")); });
+    }).catch(e => { if (!stopped) o.onError && o.onError(e); });
     return { stop() { stopped = true; try { a.pause(); } catch (e) {} } };
   }
   window.THEO_VOZ = {
