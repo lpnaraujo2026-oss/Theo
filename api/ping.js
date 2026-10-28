@@ -11,8 +11,6 @@ export default async function handler(req) {
     claude: ok && !!process.env.ANTHROPIC_API_KEY,
     voz: ok && !!process.env.GOOGLE_API_KEY,
     banco: ok && hasRedis(),
-    bancoVars: bancoVars(),
-    temClaude: !!process.env.ANTHROPIC_API_KEY,
-    temVoz: !!process.env.GOOGLE_API_KEY,
+    bancoVars: ok ? bancoVars() : undefined,
   }, ok ? 200 : 401);
 }

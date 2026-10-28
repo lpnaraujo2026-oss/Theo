@@ -1066,8 +1066,8 @@ function play(from){
       if(i<ans.cenas.length-1){ i++; timer=setTimeout(runScene,250); }
       else if(ans.streaming){ setStatus("Pensando");
         ans.onMore=()=>{ ans.onMore=null; if(id!==playId||answer!==ans) return;
-          if(i<ans.cenas.length-1){ i++; runScene(); } else { speaking=false; setStatus("Pronto"); $("bPlay").textContent="▶ Ouvir de novo"; } }; }
-      else { speaking=false; setStatus("Pronto"); $("bPlay").textContent="▶ Ouvir de novo"; } };
+          if(i<ans.cenas.length-1){ i++; runScene(); } else { speaking=false; setStatus("Pronto"); $("bPlay").textContent="▶ Ouvir de novo"; afterSpeak(); } }; }
+      else { speaking=false; setStatus("Pronto"); $("bPlay").textContent="▶ Ouvir de novo"; afterSpeak(); } };
     speaking=true; setStatus("Falando");
     if(!silentMode()){
       caption("");
@@ -1435,6 +1435,12 @@ let noSR=false;
 const SR0=window.SpeechRecognition||window.webkitSpeechRecognition;
 const SRget=()=>noSR?null:SR0;
 let rec=null, heard="", interim="", micFailed=false;
+/* Modo conversa: depois que o THEO termina de falar, o microfone reabre sozinho.
+   Encerra com silêncio prolongado, com Parar ou quando o senhor digita. */
+let conversa=false, convTimer=null;
+function afterSpeak(){ clearTimeout(convTimer); if(!conversa || listening || thinking) return;
+  convTimer=setTimeout(()=>{ if(conversa && !listening && !thinking && !speaking) startMic(true); },600); }
+function endConversa(msg){ conversa=false; clearTimeout(convTimer); if(msg) note(msg); }
 function setMicUI(on){ listening=on; $("mic").classList.toggle("rec",on); $("mic").setAttribute("aria-pressed",on);
   $("micLbl").textContent=on?"Enviar":"Microfone";
   if(on) setStatus("Ouvindo","rec"); else if(!thinking && !speaking) setStatus("Pronto"); }
@@ -1450,39 +1456,44 @@ function micBlocked(){ micFailed=true; setMicUI(false);
 let recRec=null;
 function startRecMic(){
   if(!(window.THEO_MIC && window.THEO_MIC.available())){ micBlocked(); return; }
-  stop(); setMicUI(true); caption("Pode falar…",true); note("Fale normalmente. Eu envio sozinho quando o senhor fizer uma pausa, ou toque em Enviar.");
+  stop(); conversa=true; setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando o senhor fizer uma pausa e volto a ouvir em seguida.");
   window.THEO_MIC.record({
     onLevel:v=>{ energyBump=Math.max(energyBump,Math.min(.8,v*6)); },
     onState:s=>{ if(s==="transcrevendo"){ setStatus("Pensando"); caption("Transcrevendo…",true); } },
     onText:(t,err)=>{ recRec=null; setMicUI(false); caption("");
-      if(t){ note(""); ask(t); } else note(err?"Não consegui transcrever a fala. Tente de novo.":"Não captei nenhuma fala. Tente de novo."); }
+      if(t){ note(""); ask(t); } else if(err){ endConversa("Não consegui transcrever a fala. Toque no microfone para tentar de novo."); }
+      else endConversa(conversa?"Conversa encerrada. Toque no microfone quando quiser retomar.":"Não captei nenhuma fala. Tente de novo."); }
   }).then(r=>{ recRec=r; }).catch(()=>{ setMicUI(false); recRec=null; note("O microfone não foi liberado. Permita o uso do microfone para este site nas configurações do navegador.",true); });
 }
 function startMic(){
   const SR=SRget();
   if(!SR){ startRecMic(); return; }
-  stop(); heard=""; interim="";
+  stop(); heard=""; interim=""; conversa=true;
+  let pausa=null; const t0=performance.now();
+  const armar=()=>{ clearTimeout(pausa); pausa=setTimeout(()=>{ if(listening && rec && (heard+interim).trim()) rec.stopAndSend(); },1500); };
+  const espera=setTimeout(()=>{ if(listening && rec && !(heard+interim).trim()) rec.stopAndSend(); },9000);
   try{ rec=new SR(); rec.lang="pt-BR"; rec.continuous=true; rec.interimResults=true; }catch(e){ micBlocked(); return; }
   let sendOnEnd=false, failed=false;
   rec.onresult=ev=>{ interim="";
     for(let i=ev.resultIndex;i<ev.results.length;i++){ const r=ev.results[i]; if(r.isFinal) heard+=r[0].transcript+" "; else interim+=r[0].transcript; }
-    energyBump=.5; const txt=(heard+interim).trim(); $("q").value=txt; caption(txt||"…",true); };
+    energyBump=.5; const txt=(heard+interim).trim(); $("q").value=txt; caption(txt||"…",true); if(txt) armar(); };
   rec.onerror=ev=>{ if(["not-allowed","service-not-allowed","audio-capture","network"].includes(ev.error)){ failed=true; setMicUI(false);
       if(ev.error!=="not-allowed" && window.THEO_MIC && window.THEO_MIC.available()){ noSR=true; startRecMic(); } else micBlocked(); } };
   rec.onend=()=>{ if(failed) return;
     if(listening && !sendOnEnd){ try{ rec.start(); return; }catch(e){} }
+    clearTimeout(pausa); clearTimeout(espera);
     setMicUI(false); const q=(heard+interim).trim(); $("q").value=""; caption("");
-    if(q) ask(q); else note("Não captei nenhuma fala. Tente de novo."); };
+    if(q) ask(q); else endConversa(performance.now()-t0>8000?"Conversa encerrada. Toque no microfone quando quiser retomar.":"Não captei nenhuma fala. Tente de novo."); };
   rec.stopAndSend=()=>{ sendOnEnd=true; try{ rec.stop(); }catch(e){ rec.onend(); } };
-  try{ rec.start(); setMicUI(true); caption("Pode falar…",true); note("Toque em Enviar quando terminar."); }
+  try{ rec.start(); setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando o senhor fizer uma pausa e volto a ouvir em seguida."); }
   catch(e){ micBlocked(); }
 }
-$("mic").onclick=()=>{ if(listening && recRec){ recRec.stop(); return; } if(listening && rec){ rec.stopAndSend(); return; } if(micFailed){ micBlocked(); return; } startMic(); };
+$("mic").onclick=()=>{ clearTimeout(convTimer); if(listening && recRec){ recRec.stop(); return; } if(listening && rec){ rec.stopAndSend(); return; } if(micFailed){ micBlocked(); return; } startMic(); };
 
 /* ================= controles do estudo ================= */
 function syncVoiceBtn(){ $("bVoice").setAttribute("aria-pressed",voiceOn); $("bVoice").textContent=voiceOn?"Voz ligada":"Voz desligada"; }
 $("bPlay").onclick=()=>{ if(speaking) stop(); else play(scene); };
-$("bStop").onclick=()=>{ stop(); if(ctl) ctl.abort(); };
+$("bStop").onclick=()=>{ endConversa(); stop(); if(ctl) ctl.abort(); if(listening){ try{ if(recRec) recRec.stop(); if(rec){ rec.onend=null; rec.stop(); } }catch(e){} setMicUI(false); caption(""); } };
 $("bPrev").onclick=()=>{ stop(); setScene(scene-1); if(silentMode()) caption(answer.cenas[scene].fala); };
 $("bNext").onclick=()=>{ stop(); setScene(scene+1); if(silentMode()) caption(answer.cenas[scene].fala); };
 $("bDemo").onclick=()=>{ stop(); if(ctl) ctl.abort(); answer=DEMO; revealed=0; scene=0; play(0); };
@@ -1513,7 +1524,7 @@ $("bTest").onclick=()=>{
     speechSynthesis.speak(u); }catch(e){}
 };
 $("bVoice").onclick=()=>{ voiceOn=!voiceOn; syncVoiceBtn(); if(speaking) play(scene); };
-$("form").addEventListener("submit",e=>{ e.preventDefault(); if(listening && recRec){ recRec.stop(); return; } if(listening && rec){ rec.stopAndSend(); return; } const q=$("q").value; $("q").value=""; ask(q); });
+$("form").addEventListener("submit",e=>{ e.preventDefault(); if(listening && recRec){ recRec.stop(); return; } if(listening && rec){ rec.stopAndSend(); return; } const q=$("q").value; $("q").value=""; endConversa(); ask(q); });
 $("q").addEventListener("keydown",e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); $("form").requestSubmit(); } });
 function buildChips(){
   const list=[...(books.length?SHELF_SUGGEST:[]),...SUGGEST];
