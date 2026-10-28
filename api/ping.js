@@ -1,5 +1,5 @@
 // Verifica a senha e informa o que está configurado.
-import { authorized, json, hasRedis } from "./_util.js";
+import { authorized, json, hasRedis, bancoVars } from "./_util.js";
 
 export const config = { runtime: "edge" };
 
@@ -11,5 +11,8 @@ export default async function handler(req) {
     claude: ok && !!process.env.ANTHROPIC_API_KEY,
     voz: ok && !!process.env.GOOGLE_API_KEY,
     banco: ok && hasRedis(),
+    bancoVars: bancoVars(),
+    temClaude: !!process.env.ANTHROPIC_API_KEY,
+    temVoz: !!process.env.GOOGLE_API_KEY,
   }, ok ? 200 : 401);
 }

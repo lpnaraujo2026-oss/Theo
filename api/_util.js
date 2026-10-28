@@ -17,10 +17,21 @@ export function authorized(req) {
 }
 
 // Banco: Upstash Redis via REST (criado pela integração da Vercel).
+function envFind(re) {
+  try { for (const k of Object.keys(process.env)) if (re.test(k) && process.env[k]) return process.env[k]; } catch {}
+  return "";
+}
 function redisCfg() {
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  const e = process.env;
+  const url = e.KV_REST_API_URL || e.UPSTASH_REDIS_REST_URL || e.STORAGE_KV_REST_API_URL || e.REDIS_KV_REST_API_URL
+    || envFind(/(KV_REST_API_URL|REDIS_REST_URL)$/);
+  const token = e.KV_REST_API_TOKEN || e.UPSTASH_REDIS_REST_TOKEN || e.STORAGE_KV_REST_API_TOKEN || e.REDIS_KV_REST_API_TOKEN
+    || envFind(/(KV_REST_API_TOKEN|REDIS_REST_TOKEN)$/);
   return url && token ? { url, token } : null;
+}
+// Só os NOMES das variáveis do banco (nunca os valores), para diagnóstico.
+export function bancoVars() {
+  try { return Object.keys(process.env).filter(k => /KV|REDIS|UPSTASH/i.test(k)); } catch { return []; }
 }
 export const hasRedis = () => !!redisCfg();
 
