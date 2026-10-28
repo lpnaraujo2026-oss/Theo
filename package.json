@@ -1,0 +1,7 @@
+{
+  "name": "theo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "THEO — assistente de estudo teológico",
+  "type": "module"
+}

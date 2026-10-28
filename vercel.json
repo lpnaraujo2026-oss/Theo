@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/_blob/:id", "destination": "/api/capa?id=:id" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [ { "key": "Permissions-Policy", "value": "microphone=(self)" } ] }
+  ]
+}
