@@ -915,9 +915,15 @@ function rPerguntas(v){
 const PIC_CACHE={};
 const strip=h=>S(String(h||"").replace(/<[^>]*>/g," ").replace(/\s+/g," "));
 async function commons(q){
+  q=S(q); if(!q) return null;
+  const tries=[q+" filetype:bitmap", q, q.split(/\s+/).slice(0,3).join(" ")];
+  for(const t of [...new Set(tries)]){ const r=await commons1(t); if(r) return r; }
+  return null;
+}
+async function commons1(q){
   if(PIC_CACHE[q]) return PIC_CACHE[q];
   const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=8"
-    +"&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000";
+    +"&gsrsearch="+encodeURIComponent(q)+"&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000";
   PIC_CACHE[q]=fetch(u).then(r=>r.json()).then(d=>{
     const ps=Object.values((d.query&&d.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0));
     for(const p of ps){ const ii=p.imageinfo&&p.imageinfo[0]; if(!ii||!/jpe?g|png|webp/.test(ii.mime||"")||(ii.width||0)<400) continue;
@@ -930,7 +936,7 @@ function rImage(v){
   const f=el("figure","pic in"); const wait=el("div","wait","Buscando imagem…"); f.append(wait);
   const leg=S(v.legenda);
   commons(S(v.busca)||S(v.titulo)).then(r=>{
-    if(!r){ f.replaceChildren(el("p","hl",leg||S(v.titulo))); return; }
+    if(!r){ f.replaceChildren(el("p","hl",leg||S(v.titulo)),el("div","cred","Não encontrei uma imagem confiável para isto.")); return; }
     const img=new Image(); img.alt=leg||S(v.titulo); img.referrerPolicy="no-referrer";
     img.onload=()=>{ const cr=el("div","cred"); const a=el("a",null,"Wikimedia Commons"); a.href=r.link; a.target="_blank"; a.rel="noopener";
       cr.append(document.createTextNode([r.autor,r.lic].filter(Boolean).join(" · ")+(r.autor||r.lic?" · ":"")),a);
@@ -1257,7 +1263,7 @@ VISUAL é exatamente um destes:
 {"tipo":"conceito","titulo":"...","centro":"até 4 palavras","ramos":["até 4 palavras"]}  (3 a 6 ramos)
 {"tipo":"figura","nome":"...","periodo":"...","contribuicoes":["até 14 palavras"]}  (2 a 4)
 {"tipo":"versiculo","referencia":"Livro cap.vers","parafrase":"até 35 palavras","nota":"opcional"}
-{"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, só quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista)
+{"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista. OBRIGATÓRIO: se o usuário pedir imagem, quadro, pintura, mapa, foto, retrato ou disser "mostre", a PRIMEIRA cena deve ser deste tipo)
 {"tipo":"estante","titulo":"Da estante do senhor","livros":[{"id":"código L... do livro","motivo":"por que serve, até 16 palavras"}]}  (1 a 4 livros)
 
 ${ctx}Pergunta: ${q}`;
@@ -1385,7 +1391,7 @@ VISUAL é um destes:
 {"tipo":"conceito","titulo":"...","centro":"até 4 palavras","ramos":["até 4 palavras"]}
 {"tipo":"figura","nome":"...","periodo":"...","contribuicoes":["até 14 palavras"]}
 {"tipo":"versiculo","referencia":"Livro cap.vers","parafrase":"até 35 palavras","nota":"opcional"}
-{"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, só quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista)
+{"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista. OBRIGATÓRIO: se o usuário pedir imagem, quadro, pintura, mapa, foto, retrato ou disser "mostre", a PRIMEIRA cena deve ser deste tipo)
 {"tipo":"estante","titulo":"Da estante do senhor","livros":[{"id":"código L... do livro","motivo":"até 16 palavras"}]}
 {"tipo":"perguntas","titulo":"Verificação da aula","itens":[{"pergunta":"...","opcoes":["a","b","c","d"],"correta":0,"explicacao":"uma frase"}]}`;
 }
