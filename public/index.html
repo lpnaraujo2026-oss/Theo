@@ -571,7 +571,7 @@ form.addf .full{grid-column:1/-1}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>Escolher da galeria
       </label>
       <input id="galeria" type="file" accept="image/*" multiple class="sr">
-      <span class="hint">Até 3 fotos do mesmo livro. O senhor revisa a ficha antes de salvar.</span>
+      <span class="hint">Até 3 fotos do mesmo livro. Você revisa a ficha antes de salvar.</span>
     </div>
     <div class="areas" id="areas" role="group" aria-label="Filtrar por área"></div>
     <div class="sbar"><input id="busca" type="search" placeholder="Buscar por título, autor, tema ou assunto…" aria-label="Buscar no acervo">
@@ -665,7 +665,7 @@ const svgI=t=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ================= conteúdo ================= */
 const DEMO={demo:true,titulo:"Os concílios e a pessoa de Cristo",cenas:[
-  {fala:"Veja, senhor: entre os séculos quarto e quinto a Igreja precisou responder a uma pergunta que parece simples, mas não é. Quem é Jesus Cristo? Para isso, reuniu quatro grandes concílios, cada um diante de uma controvérsia diferente.",
+  {fala:"Veja, Luiz: entre os séculos quarto e quinto a Igreja precisou responder a uma pergunta que parece simples, mas não é. Quem é Jesus Cristo? Para isso, reuniu quatro grandes concílios, cada um diante de uma controvérsia diferente.",
    visual:{tipo:"linha_do_tempo",titulo:"Quatro concílios decisivos",itens:[
      {ano:"325",rotulo:"Niceia",detalhe:"Contra o arianismo: o Filho é da mesma substância que o Pai."},
      {ano:"381",rotulo:"Constantinopla I",detalhe:"Afirma a divindade do Espírito Santo e amplia o Credo."},
@@ -679,7 +679,7 @@ const DEMO={demo:true,titulo:"Os concílios e a pessoa de Cristo",cenas:[
    visual:{tipo:"figura",nome:"Atanásio de Alexandria",periodo:"c. 296 – 373",contribuicoes:["Defendeu o termo homoousios contra os arianos","Escreveu Sobre a Encarnação do Verbo","Sofreu cinco exílios sem abandonar a fé nicena"]}},
   {fala:"Calcedônia resumiu tudo em uma fórmula. Cristo é uma única pessoa, em duas naturezas, divina e humana, unidas sem confusão, sem mudança, sem divisão e sem separação.",
    visual:{tipo:"conceito",centro:"Uma pessoa, duas naturezas",ramos:["Sem confusão","Sem mudança","Sem divisão","Sem separação"]}},
-  {fala:"E por trás de toda essa precisão está o prólogo de João. O Verbo que estava com Deus, e que era Deus, tornou-se carne e habitou entre nós. O senhor quer que examinemos as heresias que Calcedônia procurou evitar?",
+  {fala:"E por trás de toda essa precisão está o prólogo de João. O Verbo que estava com Deus, e que era Deus, tornou-se carne e habitou entre nós. Quer que a gente examine as heresias que Calcedônia procurou evitar?",
    visual:{tipo:"versiculo",referencia:"João 1.1, 14",parafrase:"No princípio já existia o Verbo; ele estava com Deus e era Deus. Esse Verbo se fez homem e viveu entre nós.",nota:"Texto-base da discussão cristológica dos concílios."}}
 ]};
 const DEMO_NOTAS=[
@@ -723,18 +723,19 @@ const AULAS_PREV=4;
 /* ================= estado ================= */
 const hora=new Date().getHours();
 const SAUD=hora<5?"Boa noite":hora<12?"Bom dia":hora<18?"Boa tarde":"Boa noite";
-/* cumprimento variado: muda a cada abertura, sempre formal, às vezes com um gracejo */
+/* cumprimento variado e descontraído: muda a cada abertura */
 const GREETS=[
-  `${SAUD}, senhor. Como posso ajudá-lo hoje?`,
-  `${SAUD}, senhor. Os livros estão em ordem e as perguntas, bem-vindas. Por onde começamos?`,
-  `${SAUD}, senhor. Agostinho levou anos para escrever as Confissões; nós podemos começar com uma boa pergunta. Qual será?`,
-  `${SAUD}, senhor. Que tema da Escritura vamos examinar hoje?`,
-  `${SAUD}, senhor. Prometo ser mais breve que um sermão puritano. Em que posso servi-lo?`,
-  `${SAUD}, senhor. Wesley cavalgava milhares de quilômetros para pregar; ao senhor basta perguntar. O que vamos estudar?`,
-  `${SAUD}, senhor. A estante está à disposição, e eu também. Qual é o assunto de hoje?`,
-  `${SAUD}, senhor. Teologia, história da Igreja ou um texto difícil? Estou pronto para qualquer um dos três.`,
-  ...(hora>=22||hora<5?[`${SAUD}, senhor. Estudando a esta hora? Os monges chamariam isso de vigília. Em que posso ajudar?`]:[]),
-  ...(hora>=5&&hora<8?[`${SAUD}, senhor. Cedo como Lutero, que, segundo se conta, orava mais justamente nos dias mais cheios. Por onde começamos?`]:[])
+  `${SAUD}, Luiz! Bom te ver por aqui. Sobre o que vamos conversar hoje?`,
+  `${SAUD}, Luiz! Café na mão? Então manda a pergunta.`,
+  `${SAUD}, Luiz! Tô por aqui. O que está passando pela sua cabeça?`,
+  `${SAUD}, Luiz! Pronto pra mais uma rodada de perguntas?`,
+  `E aí, Luiz! O que vamos descobrir hoje?`,
+  `${SAUD}, Luiz! Pode perguntar o que quiser, eu prometo não enrolar.`,
+  `${SAUD}, Luiz! Sua estante e eu estamos a postos. Por onde começamos?`,
+  `Opa, Luiz! Que bom que você apareceu. No que posso ajudar?`,
+  ...(hora>=22||hora<5?[`${SAUD}, Luiz! Coruja, hein? Bora aproveitar o silêncio. O que vamos ver?`]:[]),
+  ...(hora>=5&&hora<8?[`${SAUD}, Luiz! Madrugou, hein? Bora começar o dia com uma boa pergunta.`]:[]),
+  ...(hora>=12&&hora<14?[`${SAUD}, Luiz! Hora do almoço também serve pra estudar. O que vai ser hoje?`]:[])
 ];
 const GREET_TXT=GREETS[Math.floor(Math.random()*GREETS.length)];
 const GREET={titulo:"THEO",cenas:[{fala:GREET_TXT,visual:{tipo:"destaque",titulo:"THEO à disposição",frase:GREET_TXT}}]};
@@ -897,7 +898,7 @@ async function uploadCover(file){
 function rLeituras(v){
   const w=el("div","buy");
   const tenho=arr(v.tenho,4).map(x=>({b:findBook(S(x&&x.id)),m:S(x&&x.motivo)})).filter(x=>x.b);
-  w.append(el("div","subh",tenho.length?"Na estante do senhor":"Na estante do senhor: nenhum livro desta disciplina ainda"));
+  w.append(el("div","subh",tenho.length?"Na sua estante":"Na sua estante: nenhum livro desta disciplina ainda"));
   tenho.forEach((x,i)=>{ const c=el("div","bk in"); c.style.setProperty("--d",i+1);
     const t=el("div"); t.append(el("b",null,S(x.b.titulo)),el("div","au",S(x.b.autor)));
     if(x.m) t.append(el("div","mo",x.m)); if(S(x.b.localizacao)) t.append(el("div","lo","📍 "+S(x.b.localizacao)));
@@ -1281,7 +1282,7 @@ function prompt(q){
   if(history.length) ctx="Conversa até aqui (mais antiga primeiro). Dê continuidade natural, sem repetir o que já foi dito:\n"+history.map(h=>`Usuário: ${h.q}\nTHEO: ${h.a.slice(0,900)}`).join("\n\n")+"\n\n";
   return `Você é THEO, um assistente inteligente, teólogo, bibliotecário e acadêmico crente, interlocutor de estudo bíblico, teologia sistemática e teologia histórica, falando português do Brasil. O nome vem de Theós, Deus em grego, a raiz de teologia. Você conversa com o usuário em voz alta, enquanto ilustrações aparecem na tela ao redor de você.
 
-Tom de voz: um bate-papo formal entre dois estudiosos, como um professor experiente conversando com um colega em seu gabinete. Trate o usuário SEMPRE por "o senhor" ("o senhor", "ao senhor", "como o senhor sabe", "do senhor"), nunca por "você" nem "seu/sua". Seja cordial e respeitoso, sem gírias e sem bajulação. Comece respondendo de fato, sem elogiar a pergunta. Humor: tenha um senso de humor moderado e inteligente. Mantendo a linguagem formal, não perca a oportunidade de um gracejo espirituoso e breve (uma ironia fina, um trocadilho erudito, uma observação bem-humorada sobre um personagem histórico ou sobre a própria pergunta), no máximo um por resposta e nunca à custa da clareza. Jamais faça graça com o texto sagrado, com Deus, com a fé de outras tradições ou com o próprio usuário. Ligue as ideias como numa conversa ("Veja", "Aqui está o ponto central", "Isso nos leva a", "Por outro lado"). Quando fizer sentido, termine a última fala com uma pergunta curta que convide a continuar o estudo.
+Tom de voz: uma conversa próxima entre dois amigos que gostam de estudar juntos, como um professor experiente e acessível batendo papo com um colega. O usuário se chama Luiz: trate-o por "você" e chame-o pelo nome de vez em quando, com naturalidade (nunca "senhor"). Fale de forma clara, correta e descontraída, sem rigidez, sem gírias pesadas e sem bajulação. Comece respondendo de fato, sem elogiar a pergunta. Humor: tenha um senso de humor moderado e inteligente. Não perca a oportunidade de um gracejo espirituoso e breve (uma ironia fina, um trocadilho erudito, uma observação bem-humorada sobre um personagem histórico ou sobre a própria pergunta), no máximo um por resposta e nunca à custa da clareza. Jamais faça graça com o texto sagrado, com Deus, com a fé de outras tradições ou com o próprio usuário. Ligue as ideias como numa conversa ("Veja", "Aqui está o ponto central", "Isso nos leva a", "Por outro lado"). Quando fizer sentido, termine a última fala com uma pergunta curta que convide a continuar o estudo.
 
 Tamanho: ajuste ao que foi perguntado. Uma saudação, um comentário ou uma pergunta simples pede uma ou duas cenas curtas. Um tema amplo pede de três a cinco cenas.
 
@@ -1299,7 +1300,7 @@ ESTANTE DO USUÁRIO (livros que ele possui):
 ${catalogo(q)}
 
 Uso da estante:
-- Quando algum desses livros for realmente útil para o tema, inclua UMA cena com o visual "estante" (de preferência a última) e, na fala dessa cena, mencione os livros pelo título com naturalidade ("Na estante do senhor, o livro tal, de fulano, trata exatamente disso").
+- Quando algum desses livros for realmente útil para o tema, inclua UMA cena com o visual "estante" (de preferência a última) e, na fala dessa cena, mencione os livros pelo título com naturalidade ("Na sua estante, Luiz, o livro tal, de fulano, trata exatamente disso").
 - Se o usuário perguntar sobre os livros dele, responda só com base nessa lista. Se nada tratar do tema, diga isso com franqueza.
 - Nunca diga que ele possui um livro que não está na lista, e nunca diga que ele NÃO possui um livro sem antes procurá-lo na lista completa (por título, parte do título ou autor). Se o livro estiver lá, confirme com o título exato.
 - No visual "estante" e em "tenho", use no campo "id" o código do livro (ex.: "L123").
@@ -1317,7 +1318,7 @@ VISUAL é exatamente um destes:
 {"tipo":"figura","nome":"...","periodo":"...","contribuicoes":["até 14 palavras"]}  (2 a 4)
 {"tipo":"versiculo","referencia":"Livro cap.vers","parafrase":"até 35 palavras","nota":"opcional"}
 {"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista. OBRIGATÓRIO: se o usuário pedir imagem, quadro, pintura, mapa, foto, retrato ou disser "mostre", a PRIMEIRA cena deve ser deste tipo)
-{"tipo":"estante","titulo":"Da estante do senhor","livros":[{"id":"código L... do livro","motivo":"por que serve, até 16 palavras"}]}  (1 a 4 livros)
+{"tipo":"estante","titulo":"Da sua estante","livros":[{"id":"código L... do livro","motivo":"por que serve, até 16 palavras"}]}  (1 a 4 livros)
 
 ${ctx}Pergunta: ${q}`;
 }
@@ -1381,14 +1382,14 @@ function modeCommand(q){
 function say(fala,titulo){ answer={titulo:"THEO",cenas:[{fala,visual:{tipo:"destaque",titulo,frase:fala}}]}; revealed=0; scene=0; play(0); }
 function runCommand(cmd){
   showTab("estudo"); $("start").hidden=true;
-  if(cmd==="aula"){ const nx=nextDisc(); if(nx) startLesson(nx); else say("Senhor, todas as disciplinas do curso já foram concluídas.","Curso concluído"); return; }
+  if(cmd==="aula"){ const nx=nextDisc(); if(nx) startLesson(nx); else say("Luiz, todas as disciplinas do curso já foram concluídas.","Curso concluído"); return; }
   if(cmd==="on"){
     if(!acad){ acad=true; applyMode(); }
     const nx=nextDisc();
-    say(nx?`Modo acadêmico ativado, senhor. Nossa próxima aula é ${nx.nome}, aula ${PR(nx.id).aulas.length+1}. Quando quiser, diga: começar a aula.`:"Modo acadêmico ativado, senhor. Todas as disciplinas estão concluídas.","Modo acadêmico");
+    say(nx?`Modo acadêmico ativado, Luiz. Nossa próxima aula é ${nx.nome}, aula ${PR(nx.id).aulas.length+1}. Quando quiser, diga: começar a aula.`:"Modo acadêmico ativado, Luiz. Todas as disciplinas estão concluídas.","Modo acadêmico");
   } else {
     if(acad){ acad=false; applyMode(); }
-    say("Modo acadêmico desativado, senhor. Voltamos ao modo normal. Como posso ajudá-lo?","Modo normal");
+    say("Modo acadêmico desativado, Luiz. Voltamos ao modo normal. Como posso ajudá-lo?","Modo normal");
   }
 }
 try{ prog=JSON.parse(localStorage.getItem("machaira.prog")||"{}")||{}; }catch(e){ prog={}; }
@@ -1412,7 +1413,7 @@ const LINHA=`Linha teológica do aluno: wesleyano-arminiano. Quando o tema tocar
 function lessonPrompt(d,n){
   const p=PR(d.id), prev=p.aulas.map((a,i)=>`Aula ${i+1}: ${a.titulo}`).join("\n")||"(nenhuma ainda)";
   const all=CURSO.filter(x=>x.sem===d.sem).map(x=>x.nome).join("; ");
-  return `Você é THEO, professor do Bacharelado em Teologia do aluno, em Modo Acadêmico. Fale em português do Brasil, em voz alta, tratando o aluno SEMPRE por "o senhor". Tom de aula particular de um professor experiente: claro, formal, didático, sem bajulação. Humor: tenha um senso de humor moderado e inteligente. Mantendo a linguagem formal, não perca a oportunidade de um gracejo espirituoso e breve (uma ironia fina, um trocadilho erudito, uma observação bem-humorada sobre um personagem histórico ou sobre a própria pergunta), no máximo um por resposta e nunca à custa da clareza. Jamais faça graça com o texto sagrado, com Deus, com a fé de outras tradições ou com o próprio usuário.
+  return `Você é THEO, professor do Bacharelado em Teologia do aluno, em Modo Acadêmico. Fale em português do Brasil, em voz alta, tratando o aluno, Luiz, por "você" e pelo nome de vez em quando (nunca "senhor"). Tom de aula particular com um professor experiente e próximo: claro, didático, descontraído sem perder a precisão, sem bajulação. Humor: tenha um senso de humor moderado e inteligente. Não perca a oportunidade de um gracejo espirituoso e breve (uma ironia fina, um trocadilho erudito, uma observação bem-humorada sobre um personagem histórico ou sobre a própria pergunta), no máximo um por resposta e nunca à custa da clareza. Jamais faça graça com o texto sagrado, com Deus, com a fé de outras tradições ou com o próprio usuário.
 
 Disciplina: ${d.nome} (${d.sem}º semestre, eixo ${d.eixo}). Outras disciplinas deste semestre: ${all}.
 Esta é a AULA ${n} de cerca de ${AULAS_PREV} aulas planejadas para a disciplina.
@@ -1428,7 +1429,7 @@ ESTANTE DO ALUNO (livros que ele possui; use os códigos L... como id):
 ${catalogo(d.nome+" "+(prev||""))}
 
 Estrutura da aula, de 5 a 7 cenas:
-1. Abertura: diga o título da aula e o que o senhor vai aprender (visual "destaque").
+1. Abertura: diga o título da aula e o que o Luiz vai aprender (visual "destaque").
 ${n===1?`2. Leituras da disciplina (visual "leituras"): em "tenho", os livros da estante que servem a esta disciplina (só códigos L... da lista; vazio se nenhum serve). Em "comprar", de 2 a 3 obras de referência para esta disciplina que você tem SEGURANÇA de existirem em português; informe autor e, só se tiver certeza, a editora brasileira. Na fala, diga primeiro o que o aluno já tem e depois o que vale adquirir.\n3.`:"2."} Conteúdo em 3 ou 4 cenas, com visuais variados (linha_do_tempo, comparacao, conceito, figura, versiculo, destaque, estante).
 Última cena: visual "perguntas" com 3 perguntas de múltipla escolha (4 opções cada) sobre ESTA aula; na fala, convide o aluno a responder e anuncie em uma frase o tema da próxima aula.
 
@@ -1446,12 +1447,12 @@ VISUAL é um destes:
 {"tipo":"figura","nome":"...","periodo":"...","contribuicoes":["até 14 palavras"]}
 {"tipo":"versiculo","referencia":"Livro cap.vers","parafrase":"até 35 palavras","nota":"opcional"}
 {"tipo":"imagem","titulo":"...","busca":"2 a 6 palavras EM INGLÊS para achar a imagem no Wikimedia Commons (ex.: Rembrandt Return of the Prodigal Son; Codex Sinaiticus; map Paul missionary journeys; Jacobus Arminius portrait)","legenda":"o que a imagem mostra, até 20 palavras"}  (no máximo UMA por resposta, quando uma obra de arte, mapa, manuscrito, lugar ou retrato real enriquecer a explicação; o sistema busca a imagem, então descreva algo que exista. OBRIGATÓRIO: se o usuário pedir imagem, quadro, pintura, mapa, foto, retrato ou disser "mostre", a PRIMEIRA cena deve ser deste tipo)
-{"tipo":"estante","titulo":"Da estante do senhor","livros":[{"id":"código L... do livro","motivo":"até 16 palavras"}]}
+{"tipo":"estante","titulo":"Da sua estante","livros":[{"id":"código L... do livro","motivo":"até 16 palavras"}]}
 {"tipo":"perguntas","titulo":"Verificação da aula","itens":[{"pergunta":"...","opcoes":["a","b","c","d"],"correta":0,"explicacao":"uma frase"}]}`;
 }
 function examPrompt(d){
   const p=PR(d.id), prev=p.aulas.map((a,i)=>`Aula ${i+1}: ${a.titulo}`).join("\n")||"(sem aulas registradas: cubra o conteúdo essencial da disciplina)";
-  return `Você é THEO, professor do Bacharelado em Teologia, aplicando a PROVA da disciplina ${d.nome} (${d.sem}º semestre). Trate o aluno por "o senhor". ${LINHA}
+  return `Você é THEO, professor do Bacharelado em Teologia, aplicando a PROVA da disciplina ${d.nome} (${d.sem}º semestre). Trate o aluno, Luiz, por "você". ${LINHA}
 Aulas dadas:
 ${prev}
 Monte UMA cena: na "fala", em 2 frases, apresente a prova; o visual é "perguntas" com 8 perguntas de múltipla escolha (4 opções), de dificuldade crescente, cobrindo as aulas. Não invente fatos.
@@ -1482,7 +1483,7 @@ function renderGrade(){
   const started=CURSO.some(d=>stOf(d.id)!=="nao");
   $("bContinueLbl").textContent=!nx?"Curso concluído":started?"Continuar o curso":"Começar o curso";
   $("bContinue").disabled=!nx;
-  $("gNext").textContent=nx?`Próxima: ${nx.nome} · aula ${PR(nx.id).aulas.length+1}`:"Parabéns, senhor: todas as disciplinas concluídas.";
+  $("gNext").textContent=nx?`Próxima: ${nx.nome} · aula ${PR(nx.id).aulas.length+1}`:"Parabéns, Luiz: todas as disciplinas concluídas.";
   if($("vGrade").hidden) return;
   $("sems").replaceChildren(...CURSO_RAW.map((sem,i)=>{
     const box=el("section","card sem"); const ds=CURSO.filter(d=>d.sem===i+1);
@@ -1533,7 +1534,7 @@ const SR0=window.SpeechRecognition||window.webkitSpeechRecognition;
 const SRget=()=>noSR?null:SR0;
 let rec=null, heard="", interim="", micFailed=false;
 /* Modo conversa: depois que o THEO termina de falar, o microfone reabre sozinho.
-   Encerra com silêncio prolongado, com Parar ou quando o senhor digita. */
+   Encerra com silêncio prolongado, com Parar ou quando você digita. */
 let conversa=false, convTimer=null;
 function afterSpeak(){ clearTimeout(convTimer); if(!conversa || listening || thinking) return;
   convTimer=setTimeout(()=>{ if(conversa && !listening && !thinking && !speaking) startMic(true); },600); }
@@ -1553,7 +1554,7 @@ function micBlocked(){ micFailed=true; setMicUI(false);
 let recRec=null;
 function startRecMic(){
   if(!(window.THEO_MIC && window.THEO_MIC.available())){ micBlocked(); return; }
-  stop(); conversa=true; setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando o senhor fizer uma pausa e volto a ouvir em seguida.");
+  stop(); conversa=true; setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando você fizer uma pausa e volto a ouvir em seguida.");
   window.THEO_MIC.record({
     onLevel:v=>{ energyBump=Math.max(energyBump,Math.min(.8,v*6)); },
     onState:s=>{ if(s==="transcrevendo"){ setStatus("Pensando"); caption("Transcrevendo…",true); } },
@@ -1582,7 +1583,7 @@ function startMic(){
     setMicUI(false); const q=(heard+interim).trim(); $("q").value=""; caption("");
     if(q) ask(q); else endConversa(performance.now()-t0>8000?"Conversa encerrada. Toque no microfone quando quiser retomar.":"Não captei nenhuma fala. Tente de novo."); };
   rec.stopAndSend=()=>{ sendOnEnd=true; try{ rec.stop(); }catch(e){ rec.onend(); } };
-  try{ rec.start(); setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando o senhor fizer uma pausa e volto a ouvir em seguida."); }
+  try{ rec.start(); setMicUI(true); caption("Pode falar…",true); note("Pode falar. Eu respondo quando você fizer uma pausa e volto a ouvir em seguida."); }
   catch(e){ micBlocked(); }
 }
 $("mic").onclick=()=>{ clearTimeout(convTimer); if(listening && recRec){ recRec.stop(); return; } if(listening && rec){ rec.stopAndSend(); return; } if(micFailed){ micBlocked(); return; } startMic(); };
@@ -1615,8 +1616,8 @@ $("bTest").onclick=()=>{
   stop();
   if(srvVoice()){ speaking=true; setStatus("Falando"); const pulse=setInterval(()=>{ energyBump=.45; },230);
     const end=()=>{ clearInterval(pulse); speaking=false; setStatus("Pronto"); };
-    curSpeech=window.THEO_VOZ.speak("Teo à disposição, senhor.",{tune,onEnd:end,onError:()=>{ end(); note("A voz do servidor falhou. Verifique a chave do Google.",true); }}); return; }
-  try{ const u=new SpeechSynthesisUtterance("Teo à disposição, senhor."); u.lang=voice?voice.lang:"pt-BR"; if(voice) u.voice=voice; applyTune(u);
+    curSpeech=window.THEO_VOZ.speak("Oi, Luiz! O Teo está ouvindo.",{tune,onEnd:end,onError:()=>{ end(); note("A voz do servidor falhou. Verifique a chave do Google.",true); }}); return; }
+  try{ const u=new SpeechSynthesisUtterance("Oi, Luiz! O Teo está ouvindo."); u.lang=voice?voice.lang:"pt-BR"; if(voice) u.voice=voice; applyTune(u);
     u.onboundary=()=>{ energyBump=.55; }; speaking=true; setStatus("Falando"); u.onend=u.onerror=()=>{ speaking=false; setStatus("Pronto"); };
     speechSynthesis.speak(u); }catch(e){}
 };
@@ -1865,7 +1866,7 @@ function setupStart(){
   const nx=nextDisc();
   if(acad && nx){
     const n=PR(nx.id).aulas.length+1;
-    const txt=`${SAUD}, senhor. Modo acadêmico ativo. Como posso ajudá-lo hoje?`;
+    const txt=`${SAUD}, Luiz! Modo acadêmico ligado. Como posso ajudá-lo hoje?`;
     GREET.cenas[0].fala=`${txt} Nossa próxima aula é ${nx.nome}, aula ${n}.`;
     GREET.cenas[0].visual={tipo:"destaque",titulo:"Modo acadêmico",frase:`Próxima aula: ${nx.nome} · aula ${n}`};
     $("startGreet").textContent=txt;
