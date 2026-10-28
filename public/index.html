@@ -126,7 +126,8 @@ header{display:flex;align-items:center;gap:12px;padding-block:12px 4px;flex-wrap
 #ticks{width:220px;height:12px;display:block}
 
 /* palco */
-.stage{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;overflow:hidden;column-gap:clamp(24px,4vw,64px)}
+.stage{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;column-gap:clamp(24px,4vw,64px)}
+.stage::-webkit-scrollbar{display:none}
 /* com notas: a ideia principal no centro e os acréscimos nas laterais, usando a tela toda */
 .stage.wide{grid-template-columns:minmax(0,300px) minmax(0,620px) minmax(0,300px);justify-content:center}
 .sats{display:none;position:relative;z-index:2;flex-direction:column;justify-content:center;gap:clamp(14px,3vh,34px);width:100%;align-self:stretch;padding-block:10px;min-width:0}
@@ -144,7 +145,7 @@ header{display:flex;align-items:center;gap:12px;padding-block:12px 4px;flex-wrap
 .nh b{font-family:var(--f-display);font-weight:600;font-size:.95rem;line-height:1.2;color:var(--nc)}
 .note p{margin:0;font-size:.9rem;line-height:1.45;color:var(--ink)}
 /* revelação progressiva, conforme a fala */
-.pend{opacity:0!important;visibility:hidden;animation:none!important}
+.pend,.ipend{opacity:0!important;visibility:hidden;animation:none!important}
 /* frase-chave em letra grande */
 .keyline{font-family:var(--f-display);font-weight:600;font-size:clamp(1.35rem,2.5vw,2.1rem);line-height:1.2;text-align:center;text-wrap:balance;color:#fff;
   text-shadow:0 0 18px rgba(var(--rgb-cyan),.65),0 0 2px rgba(0,0,0,.6);padding-inline:8px;animation:keyIn .7s cubic-bezier(.2,.7,.2,1) both}
@@ -166,14 +167,22 @@ header{display:flex;align-items:center;gap:12px;padding-block:12px 4px;flex-wrap
   .sats.left .note,.sats.right .note{border-right:1px solid color-mix(in srgb,var(--nc) 55%,transparent);border-left:3px solid var(--nc)}
 }
 #orb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(96vmin,820px);aspect-ratio:1;pointer-events:none;z-index:0}
-.deck{position:relative;z-index:1;width:100%;max-width:680px;min-width:0;max-height:100%;display:flex;flex-direction:column;gap:12px;padding-block:10px;min-height:0}
+.deck{position:relative;z-index:1;width:100%;max-width:680px;min-width:0;display:flex;flex-direction:column;gap:12px;padding-block:10px;min-height:0}
+.deck::before{content:"";position:absolute;inset:-6% -10%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(0,0,0,.62),rgba(0,0,0,.35) 60%,transparent);filter:blur(6px)}
 
 /* cartões */
 .card{position:relative;background:var(--card);border:1px solid var(--edge);border-radius:12px;
   backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
   box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 10px 40px rgba(var(--rgb-shade),.45);min-width:0}
-.card.main{padding:14px 16px 16px;border-color:var(--edge2);background:var(--card2);box-shadow:0 0 30px rgba(var(--rgb-blue),.35),0 0 0 1px rgba(255,255,255,.04) inset;
-  min-height:0;overflow:auto;animation:pop .45s cubic-bezier(.2,.7,.2,1) both}
+.card.main{padding:4px 6px 8px;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;
+  min-height:0;overflow:visible;animation:pop .45s cubic-bezier(.2,.7,.2,1) both;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.card.main .ch{justify-content:center;text-align:center}
+.card.main .ch .ico{display:none}
+.card.main .ch .grow{flex:0 1 auto}
+.card.main .ch .tagp{display:none}
+/* tudo cabe na tela, sem rolagem: o visual central encolhe para caber */
+.card.main svg{display:block;margin-inline:auto;width:auto;max-width:100%;max-height:min(38vh,400px);height:auto}
+.stage.wide .keyline{font-size:clamp(1.2rem,2vw,1.75rem)}
 @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}}
 .ch{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .ico{flex:none;width:30px;height:30px;border-radius:7px;display:grid;place-items:center;border:1px solid var(--edge2);background:rgba(var(--rgb-blue),.25);color:var(--ink)}
@@ -234,6 +243,13 @@ header{display:flex;align-items:center;gap:12px;padding-block:12px 4px;flex-wrap
 .lab{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .hl{font-family:var(--f-display);font-weight:500;font-size:1.3rem;line-height:1.4;text-wrap:balance;margin:0}
 .shelfmini{display:grid;gap:10px}
+.ilus{margin:0;position:relative;display:grid;gap:5px;justify-items:center;animation:ilusIn .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.2s + var(--d,0)*.2s)}
+.ilus img{display:block;max-width:100%;max-height:min(21vh,200px);border-radius:10px;border:1px solid rgba(var(--rgb-cyan),.45);
+  box-shadow:0 0 24px rgba(var(--rgb-cyan),.22),0 12px 34px rgba(0,0,0,.6);object-fit:cover;transform:rotate(var(--rot,0deg))}
+.ilus figcaption{font-size:.78rem;line-height:1.3;color:var(--ink);text-align:center;max-width:32ch;text-shadow:0 1px 3px #000}
+.ilus .cred{font-size:.62rem;opacity:.55;text-align:center}
+.ilus .cred a{color:inherit}
+@keyframes ilusIn{from{opacity:0;transform:scale(.9) translateY(10px)}}
 .pic{margin:0;display:grid;gap:8px;justify-items:center}
 .pic img{max-width:100%;max-height:min(30vh,260px);border-radius:10px;border:1px solid var(--edge);box-shadow:0 10px 40px rgba(0,0,0,.5);object-fit:contain;background:rgba(0,0,0,.3)}
 .pic .wait{width:100%;min-height:180px;border-radius:10px;border:1px dashed var(--edge);display:grid;place-items:center;font-size:.85rem;opacity:.7}
@@ -440,6 +456,8 @@ form.addf .full{grid-column:1/-1}
   .mic .lbl{display:none}
   .mic{padding:0 10px}
   .card.main{max-height:none}
+  .ilus img{max-height:190px}
+  .card.main svg{max-height:none}
   header .pills{order:5;width:100%;justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}.map .edge{stroke-dashoffset:0}.map g.br{opacity:1}}
@@ -918,10 +936,10 @@ function rPerguntas(v){
 /* imagem real: busca no Wikimedia Commons (acervo livre). Sem resultado, vira destaque. */
 const PIC_CACHE={};
 const strip=h=>S(String(h||"").replace(/<[^>]*>/g," ").replace(/\s+/g," "));
-async function commons(q){
+async function commons(q,used){
   q=S(q); if(!q) return null;
   const tries=[q+" filetype:bitmap", q, q.split(/\s+/).slice(0,3).join(" ")];
-  for(const t of [...new Set(tries)]){ const r=await commons1(t); if(r) return r; }
+  for(const t of [...new Set(tries)]){ const list=await commons1(t)||[]; const r=list.find(x=>!(used&&used.has(x.src))); if(r){ if(used) used.add(r.src); return r; } }
   return null;
 }
 async function commons1(q){
@@ -930,16 +948,17 @@ async function commons1(q){
     +"&gsrsearch="+encodeURIComponent(q)+"&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000";
   PIC_CACHE[q]=fetch(u).then(r=>r.json()).then(d=>{
     const ps=Object.values((d.query&&d.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0));
+    const out=[];
     for(const p of ps){ const ii=p.imageinfo&&p.imageinfo[0]; if(!ii||!/jpe?g|png|webp/.test(ii.mime||"")||(ii.width||0)<400) continue;
       const m=ii.extmetadata||{};
-      return {src:ii.thumburl||ii.url,link:ii.descriptionurl,autor:strip(m.Artist&&m.Artist.value).slice(0,80),lic:strip(m.LicenseShortName&&m.LicenseShortName.value)}; }
-    return null; }).catch(()=>null);
+      out.push({src:ii.thumburl||ii.url,link:ii.descriptionurl,autor:strip(m.Artist&&m.Artist.value).slice(0,80),lic:strip(m.LicenseShortName&&m.LicenseShortName.value)}); }
+    return out; }).catch(()=>[]);
   return PIC_CACHE[q];
 }
 function rImage(v){
   const f=el("figure","pic in"); const wait=el("div","wait","Buscando imagem…"); f.append(wait);
   const leg=S(v.legenda);
-  commons(S(v.busca)||S(v.titulo)).then(r=>{
+  commons(S(v.busca)||S(v.titulo),answer&&(answer._used||(answer._used=new Set()))).then(r=>{
     if(!r){ f.replaceChildren(el("p","hl",leg||S(v.titulo)),el("div","cred","Não encontrei uma imagem confiável para isto.")); return; }
     const img=new Image(); img.alt=leg||S(v.titulo); img.referrerPolicy="no-referrer";
     img.onload=()=>{ const cr=el("div","cred"); const a=el("a",null,"Wikimedia Commons"); a.href=r.link; a.target="_blank"; a.rel="noopener";
@@ -985,17 +1004,19 @@ function renderMain(prog){
   renderNotes(v.tipo==="perguntas"?[]:(c.notas||[]),prog);
   /* plano de revelação: itens do cartão, frase-chave e notas surgem ao longo da fala */
   plan=[];
+  renderIlus(c,prog); prefetchIlus(answer.cenas[scene+1]);
+  if(prog) plan.forEach(x=>{ if(x.el.classList.contains("ilus")) x.el.classList.add("ipend"); });
   if(prog){
     const items=[...card.querySelectorAll(".in")];
     items.forEach((e,k)=>plan.push({el:e,at:items.length>1?.04+.56*k/(items.length-1):.04}));
     if(kl.textContent) plan.push({el:kl,at:.42});
     curNotes.forEach((n,k)=>plan.push({el:n.el,note:n,at:curNotes.length>1?.18+.7*k/(curNotes.length-1):.4}));
-    plan.forEach(x=>x.el.classList.add("pend"));
+    plan.forEach(x=>{ if(!x.el.classList.contains("ilus")) x.el.classList.add("pend"); });
   }
 }
 let plan=[], progTimer=null;
 function revealEl(x){
-  x.done=true; const e=x.el; e.classList.remove("pend");
+  x.done=true; const e=x.el; e.classList.remove("pend","ipend");
   e.style.animation="none"; void e.offsetWidth; e.style.animation=""; e.style.animationDelay="0s";
   if(x.note){ x.note.shown=true; drawLinks(); }
 }
@@ -1026,6 +1047,32 @@ const SYM={
   idioma:'<path d="M4 6h9M8.5 4v2c0 4-2 7-5 8M6 10c1 2 3 3.5 6 4"/><path d="M13 20l4-9 4 9M14.5 17h5"/>'
 };
 let curNotes=[];
+/* ilustrações reais da cena, espalhadas nas laterais */
+const ilusQ=x=>typeof x==="string"?{busca:S(x),legenda:""}:{busca:S(x&&x.busca),legenda:S(x&&x.legenda)};
+function prefetchIlus(c){ if(!c) return; arr(c.imagens,3).map(ilusQ).filter(x=>x.busca).forEach(x=>commons1(x.busca+" filetype:bitmap")); }
+function renderIlus(c,prog){
+  const L=$("satL"), Rr=$("satR"), st=$("stage"); const my=answer;
+  const qs=c.visual.tipo==="perguntas"?[]:arr(c.imagens,3).map(ilusQ).filter(x=>x.busca);
+  if(!qs.length) return;
+  st.classList.add("wide");
+  const used=my._used||(my._used=new Set());
+  const max=innerHeight<860?2:3;
+  qs.slice(0,max).forEach((q,i)=>{
+    /* vai para a lateral menos ocupada */
+    const side=L.children.length<=Rr.children.length?L:Rr;
+    const f=el("figure","ilus"); f.style.setProperty("--d",i); f.style.setProperty("--rot",(i%2?1.6:-1.6)+"deg"); f.hidden=true;
+    if(side.querySelector(".ilus")) side.append(f); else side.prepend(f);
+    if(prog) plan.push({el:f,at:.08+.3*i});
+    commons(q.busca,used).then(r=>{
+      if(!r || my!==answer){ f.remove(); return; }
+      const img=new Image(); img.alt=q.legenda||q.busca; img.referrerPolicy="no-referrer"; img.loading="eager";
+      img.onload=()=>{ const cr=el("div","cred"); const a=el("a",null,"Wikimedia Commons"); a.href=r.link; a.target="_blank"; a.rel="noopener";
+        cr.append(document.createTextNode([r.autor].filter(Boolean).join("")+(r.autor?" · ":"")),a);
+        f.append(img); if(q.legenda) f.append(el("figcaption",null,q.legenda)); f.append(cr); f.hidden=false;
+        requestAnimationFrame(()=>requestAnimationFrame(drawLinks)); };
+      img.onerror=()=>f.remove(); img.src=r.src; });
+  });
+}
 function renderNotes(notas,prog){
   const L=$("satL"), Rr=$("satR"), st=$("stage");
   L.replaceChildren(); Rr.replaceChildren(); curNotes=[];
@@ -1151,7 +1198,8 @@ function cleanScene(c){
   const v=c.visual && typeof c.visual==="object"?c.visual:{};
   if(!TYPES.includes(v.tipo)){ v.tipo="destaque"; v.frase=v.frase||S(c.fala).split(/[.!?]/)[0]; }
   const notas=Array.isArray(c.notas)?c.notas.slice(0,6).filter(n=>n&&typeof n==="object"):[];
-  return {fala:S(c.fala),chave:S(c.chave).slice(0,140),visual:v,notas};
+  const imagens=Array.isArray(c.imagens)?c.imagens.slice(0,3).filter(x=>typeof x==="string"?S(x):x&&S(x.busca)):[];
+  return {fala:S(c.fala),chave:S(c.chave).slice(0,140),visual:v,notas,imagens};
 }
 function clean(o){
   if(!o || !Array.isArray(o.cenas)) return null;
@@ -1257,9 +1305,10 @@ Uso da estante:
 - No visual "estante" e em "tenho", use no campo "id" o código do livro (ex.: "L123").
 
 Formato: responda SOMENTE com um objeto JSON:
-{"titulo": "título curto", "cenas": [ {"fala": "2 a 5 frases", "chave": "até 14 palavras", "visual": VISUAL, "notas": [NOTA, ...] } ] }
+{"titulo": "título curto", "cenas": [ {"fala": "2 a 5 frases", "chave": "até 14 palavras", "visual": VISUAL, "notas": [NOTA, ...], "imagens": [IMAGEM, ...] } ] }
 FRASE-CHAVE: cada cena (exceto as de "perguntas") traz "chave": a frase mais importante da cena, curta e marcante (até 14 palavras), que aparece em letra grande na tela quando o professor chega nela. Use uma afirmação forte e fiel ao conteúdo, sem inventar citações.
 NOTAS (acréscimos ao redor da ideia principal): toda cena, exceto as de visual "perguntas", traz de 2 a 4 "notas" que complementam o visual central, sem repeti-lo: contexto histórico, termo original em grego ou hebraico, texto bíblico relacionado, ligação com outra doutrina, contraponto de outra tradição, aplicação. Cada nota: {"titulo":"até 5 palavras","texto":"até 25 palavras","simbolo":"um de: cruz, pergaminho, livro, pomba, balanca, coroa, chama, chave, lampada, arvore, espada, globo, pessoa, igreja, relogio, alerta, estrela, mapa, idioma","cor":"um de: ouro, violeta, verde, coral, ciano, rosa (cores diferentes na mesma cena)","liga":índice (0, 1, 2...) de outra nota DESTA cena com a qual ela se relaciona, ou null,"rotulo":"até 3 palavras descrevendo a ligação, se houver liga"}. Faça pelo menos uma ligação entre notas quando houver relação real. Não invente fatos nas notas.
+IMAGENS (ilustrações reais espalhadas pela tela): toda cena, exceto as de "perguntas", traz de 2 a 3 "imagens" que ilustram o assunto daquela cena. Cada IMAGEM: {"busca":"2 a 6 palavras EM INGLÊS para achar no Wikimedia Commons","legenda":"até 10 palavras em português"}. Prefira coisas concretas que certamente existem lá: pinturas e afrescos clássicos (ex.: Caravaggio Conversion of Saint Paul), mapas históricos (ex.: map ancient Jerusalem), manuscritos (ex.: Codex Sinaiticus), sítios arqueológicos (ex.: Capernaum synagogue ruins), retratos de teólogos (ex.: John Wesley portrait), igrejas e objetos. Não repita a mesma busca na resposta.
 VISUAL é exatamente um destes:
 {"tipo":"destaque","titulo":"...","frase":"a ideia central em até 18 palavras"}
 {"tipo":"linha_do_tempo","titulo":"...","itens":[{"ano":"...","rotulo":"até 5 palavras","detalhe":"até 15 palavras"}]}  (3 a 6 itens)
@@ -1384,9 +1433,10 @@ ${n===1?`2. Leituras da disciplina (visual "leituras"): em "tenho", os livros da
 Última cena: visual "perguntas" com 3 perguntas de múltipla escolha (4 opções cada) sobre ESTA aula; na fala, convide o aluno a responder e anuncie em uma frase o tema da próxima aula.
 
 Formato: responda SOMENTE com JSON:
-{"titulo":"${d.nome}","titulo_aula":"Aula ${n}: título curto","cenas":[{"fala":"2 a 5 frases","chave":"até 14 palavras","visual":VISUAL,"notas":[NOTA, ...]}]}
+{"titulo":"${d.nome}","titulo_aula":"Aula ${n}: título curto","cenas":[{"fala":"2 a 5 frases","chave":"até 14 palavras","visual":VISUAL,"notas":[NOTA, ...],"imagens":[IMAGEM, ...]}]}
 FRASE-CHAVE: cada cena (exceto as de "perguntas") traz "chave": a frase mais importante da cena, curta e marcante (até 14 palavras), que aparece em letra grande na tela quando o professor chega nela. Use uma afirmação forte e fiel ao conteúdo, sem inventar citações.
 NOTAS (acréscimos ao redor da ideia principal): toda cena, exceto as de visual "perguntas", traz de 2 a 4 "notas" que complementam o visual central, sem repeti-lo: contexto histórico, termo original em grego ou hebraico, texto bíblico relacionado, ligação com outra doutrina, contraponto de outra tradição, aplicação. Cada nota: {"titulo":"até 5 palavras","texto":"até 25 palavras","simbolo":"um de: cruz, pergaminho, livro, pomba, balanca, coroa, chama, chave, lampada, arvore, espada, globo, pessoa, igreja, relogio, alerta, estrela, mapa, idioma","cor":"um de: ouro, violeta, verde, coral, ciano, rosa (cores diferentes na mesma cena)","liga":índice (0, 1, 2...) de outra nota DESTA cena com a qual ela se relaciona, ou null,"rotulo":"até 3 palavras descrevendo a ligação, se houver liga"}. Faça pelo menos uma ligação entre notas quando houver relação real. Não invente fatos nas notas.
+IMAGENS (ilustrações reais espalhadas pela tela): toda cena, exceto as de "perguntas", traz de 2 a 3 "imagens" que ilustram o assunto daquela cena. Cada IMAGEM: {"busca":"2 a 6 palavras EM INGLÊS para achar no Wikimedia Commons","legenda":"até 10 palavras em português"}. Prefira coisas concretas que certamente existem lá: pinturas e afrescos clássicos (ex.: Caravaggio Conversion of Saint Paul), mapas históricos (ex.: map ancient Jerusalem), manuscritos (ex.: Codex Sinaiticus), sítios arqueológicos (ex.: Capernaum synagogue ruins), retratos de teólogos (ex.: John Wesley portrait), igrejas e objetos. Não repita a mesma busca na resposta.
 VISUAL é um destes:
 {"tipo":"destaque","titulo":"...","frase":"até 18 palavras"}
 {"tipo":"leituras","titulo":"Leituras da disciplina","tenho":[{"id":"código L... do livro","motivo":"até 14 palavras"}],"comprar":[{"titulo":"...","autor":"...","editora":"opcional","motivo":"até 14 palavras"}]}
